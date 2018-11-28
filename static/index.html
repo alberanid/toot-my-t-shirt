@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>toot-my-t-shirt</title>
+        <link rel="icon" type="image/png" href="/static/images/sb-favicon.png">
+        <link rel="stylesheet" type="text/css" href="/static/css/sb.css">
+        <script type="text/javascript" src="/static/js/sb.js"></script>
+    </head>
+    <body>
+        <div id="main">
+            <h1>toot-my-t-shirt</h1>
+            <div id="video-container">
+                <video id="sb-video" autoplay="true" muted="muted"></video>
+            </div>
+            <div id="canvas-container">
+                <canvas id="sb-canvas"></canvas>
+            </div>
+            <button id="init-btn" name="init-btn" onClick="initCamera()">Run!</button>
+            <button id=take-photo-btn" name="take-photo-btn" onClick="takePhoto()">Take photo!</button>
+            <button id=send-photo-btn" name="send-photo-btn" onClick="sendPhoto()">Share photo!</button>
+            <button id=cancel-photo-btn" name="cancel-photo-btn" onClick="cancelPhoto()">Cancel photo</button>
+        </div>
+    </body>
+</html>
