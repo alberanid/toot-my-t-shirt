@@ -51,7 +51,7 @@ var countdown = {
 
 function runCamera(stream) {
     console.log("initialize the camera");
-    var video = document.querySelector("video");
+    var video = document.querySelector("#sb-video");
     video.width = video.offsetWidth;
     video.onloadedmetadata = function() {
         video.play();
@@ -64,19 +64,26 @@ function sendData(data) {
     var xhr = new XMLHttpRequest();
     var boundary = "youarenotsupposedtolookatthis";
     var formData = new FormData();
+    var msg = "";
     formData.append("selfie", new Blob([data]), "selfie.jpeg");
     fetch("/publish/", {
         method: "POST",
         body: formData
     }).then(function(response) {
         if (response.status !== 200) {
-            console.log("something went wrong sending the data: " + response.status);
+            msg = "something went wrong sending the data: " + response.status;
+            console.log(msg);
+            M.toast({"html": msg});
         } else {
-            console.log("photo was sent successfully");
+            msg = "photo was sent successfully!";
+            console.log(msg);
+            M.toast({"html": msg});
         }
         cancelPhoto();
     }).catch(function(err) {
-        console.log("something went wrong connecting to server: " + err);
+        msg = "something went wrong connecting to server: " + err;
+        console.log(msg);
+        M.toast({"html": msg});
         cancelPhoto();
     });
 }
@@ -84,7 +91,10 @@ function sendData(data) {
 
 function cancelPhoto() {
     console.log("cancel photo");
-    var canvas = document.querySelector("canvas");
+    document.querySelector("#sb-message").style.visibility = "hidden";
+    document.querySelector("#send-photo-btn").classList.add("disabled");
+    document.querySelector("#cancel-photo-btn").classList.add("disabled");
+    var canvas = document.querySelector("#sb-canvas");
     var context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
     countdown.stop();
@@ -107,9 +117,12 @@ function isBlank(canvas) {
 function sendPhoto() {
     console.log("send photo");
     countdown.stop();
-    var canvas = document.querySelector("canvas");
+    document.querySelector("#sb-message").style.visibility = "hidden";
+    var canvas = document.querySelector("#sb-canvas");
     if (isBlank(canvas)) {
-        console.log("cowardly refuse to send a blank image.")
+        var msg = "I cowardly refuse to send a blank image.";
+        console.log(msg)
+        M.toast({"html": msg});
         return;
     }
     return sendData(canvas.toDataURL("image/jpeg"));
@@ -118,8 +131,9 @@ function sendPhoto() {
 
 function takePhoto() {
     console.log("take photo");
-    var video = document.querySelector("video");
-    var canvas = document.querySelector("canvas");
+    document.querySelector("#sb-message").style.visibility = "visible";
+    var video = document.querySelector("#sb-video");
+    var canvas = document.querySelector("#sb-canvas");
     var tmpCanvas = document.createElement("canvas");
 
     tmpCanvas.width = video.offsetWidth;
@@ -136,12 +150,15 @@ function takePhoto() {
     var scale = canvas.width / tmpCanvas.width;
     context.scale(scale, scale);
     context.drawImage(tmpCanvas, 0, 0);
+    document.querySelector("#send-photo-btn").classList.remove("disabled");
+    document.querySelector("#cancel-photo-btn").classList.remove("disabled");
     countdown.start(5, cancelPhoto, updateSendCountdown);
 }
 
 
 function initCamera() {
     console.log("request camera permission");
+    document.querySelector("#canvas-container").style.display = "block";
     var videoObj = {
         "video": {
             width: 800,
@@ -152,9 +169,12 @@ function initCamera() {
 
     navigator.mediaDevices.getUserMedia(videoObj).then(function(stream) {
         runCamera(stream);
+        document.querySelector("#init-btn").style.display = "none";
+        document.querySelector("#take-photo-btn").classList.remove("disabled");
     }).catch(function(err) {
         console.log("unable to open camera");
         console.log(err);
+        M.toast({"html": "unable to open camera; please reload this page: " + err});
     });
 }
 

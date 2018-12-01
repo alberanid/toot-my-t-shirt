@@ -4,22 +4,42 @@
         <meta charset="utf-8">
         <title>toot-my-t-shirt</title>
         <link rel="icon" type="image/png" href="/static/images/sb-favicon.png">
+        <link rel="stylesheet" type="text/css" href="/static/css/materialize.min.css">
         <link rel="stylesheet" type="text/css" href="/static/css/sb.css">
+        <script type="text/javascript" src="/static/js/materialize.min.js"></script>
         <script type="text/javascript" src="/static/js/sb.js"></script>
     </head>
     <body>
-        <div id="main">
-            <h1>toot-my-t-shirt</h1>
-            <div id="video-container">
-                <video id="sb-video" autoplay="true" muted="muted"></video>
+        <div id="main" class="container">
+            <div id="header" class="row">
+                <h1>toot-my-t-shirt</h1>
+                Share the love for your geek t-shirt!
             </div>
-            <div id="canvas-container">
-                <canvas id="sb-canvas"></canvas>
+
+            <div id="button-containers" class="row">
+                <button id="take-photo-btn" class="btn waves-effect waves-light disabled" name="take-photo-btn" onClick="takePhoto()">
+                    <i class="material-icons right">Take photo!</i>
+                </button>
+                <button id="send-photo-btn" class="btn waves-effect waves-light disabled" name="send-photo-btn" onClick="sendPhoto()">
+                    <i class="material-icons right">Share photo!</i>
+                </button>
+                <button id="cancel-photo-btn" class="btn waves-effect waves-light disabled" name="cancel-photo-btn" onClick="cancelPhoto()">
+                    <i class="material-icons right">Cancel photo</i>
+                </button>
+                <button id="init-btn" class="btn waves-effect waves-light" name="init-btn" onClick="initCamera()">
+                    <i class="material-icons right">Grant camera permissions</i>
+                </button>
             </div>
-            <button id="init-btn" name="init-btn" onClick="initCamera()">Run!</button>
-            <button id=take-photo-btn" name="take-photo-btn" onClick="takePhoto()">Take photo!</button>
-            <button id=send-photo-btn" name="send-photo-btn" onClick="sendPhoto()">Share photo!</button>
-            <button id=cancel-photo-btn" name="cancel-photo-btn" onClick="cancelPhoto()">Cancel photo</button>
+
+            <div class="row">
+                <div id="canvas-container">
+                    <video id="sb-video" autoplay="true" muted="muted"></video>
+                    <canvas id="sb-canvas"></canvas>
+                </div>
+                <div id="sb-message">
+                    <span id="sb-message-text">will be gone in few seconds!</span>
+                </div>
+            </div>
         </div>
     </body>
 </html>

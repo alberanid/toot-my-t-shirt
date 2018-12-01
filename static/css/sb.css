@@ -1,19 +1,39 @@
+#canvas-container {
+    position: relative;
+    display: none;
+}
+
+#header {
+    margin-left: 15px;
+}
 
 #sb-video {
-    width: 320px;
-    height: 240px;
-    margin: 15px;
-    float: left;
+    width: 640px;
+    height: 480px;
+    position: relative;
+    z-index: 100;
 }
 
 #sb-canvas {
-    width: 320px;
-    height: 240px;
-    margin: 15px;
-    float: left;
+    width: 640px;
+    height: 480px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 1000;
 }
 
-button {
-    clear:both;
-    margin: 30px;
+#sb-message {
+    visibility: hidden;
 }
+
+/*
+#sb-message-text {
+    position: absolute;
+    left: 10px;
+    bottom: 20px;
+    z-index: 10000;
+}
+*/
+
