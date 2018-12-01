@@ -1,4 +1,6 @@
 #canvas-container {
+    min-width: 640px;
+    min-height: 480px;
     position: relative;
     display: none;
 }
@@ -8,15 +10,13 @@
 }
 
 #sb-video {
-    width: 640px;
-    height: 480px;
-    position: relative;
+    position: absolute;
+    top: 0px;
+    left: 0px;
     z-index: 100;
 }
 
 #sb-canvas {
-    width: 640px;
-    height: 480px;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -26,14 +26,9 @@
 
 #sb-message {
     visibility: hidden;
-}
-
-/*
-#sb-message-text {
-    position: absolute;
-    left: 10px;
-    bottom: 20px;
     z-index: 10000;
 }
-*/
 
+.btn {
+    margin-right: 10px;
+}

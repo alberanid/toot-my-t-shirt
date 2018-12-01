@@ -52,7 +52,8 @@ var countdown = {
 function runCamera(stream) {
     console.log("initialize the camera");
     var video = document.querySelector("#sb-video");
-    video.width = video.offsetWidth;
+    var container = document.querySelector("#canvas-container");
+    container.width = video.videoWidth;
     video.onloadedmetadata = function() {
         video.play();
     };
@@ -134,8 +135,12 @@ function takePhoto() {
     document.querySelector("#sb-message").style.visibility = "visible";
     var video = document.querySelector("#sb-video");
     var canvas = document.querySelector("#sb-canvas");
+    var context = canvas.getContext("2d");
+    canvas.width = video.offsetWidth;
+    canvas.height = video.offsetHeight;
+ 
+    /*
     var tmpCanvas = document.createElement("canvas");
-
     tmpCanvas.width = video.offsetWidth;
     tmpCanvas.height = video.offsetHeight;
 
@@ -146,10 +151,11 @@ function takePhoto() {
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
     canvas.style.height = parseInt(canvas.offsetWidth * tmpRatio);
-    var context = canvas.getContext("2d");
     var scale = canvas.width / tmpCanvas.width;
     context.scale(scale, scale);
     context.drawImage(tmpCanvas, 0, 0);
+    */
+    context.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight);
     document.querySelector("#send-photo-btn").classList.remove("disabled");
     document.querySelector("#cancel-photo-btn").classList.remove("disabled");
     countdown.start(5, cancelPhoto, updateSendCountdown);

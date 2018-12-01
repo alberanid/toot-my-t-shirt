@@ -4,6 +4,10 @@ A work-in-progress project for 35C3 (from an idea by itec)
 
 Still not much to see here: the UI still sucks and very little feedback is given.
 
+# Requirements
+
+* Python 3
+* Mastodon.py: https://github.com/halcy/Mastodon.py
 
 # Run
 
