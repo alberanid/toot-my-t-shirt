@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>toot-my-t-shirt</title>
         <link rel="icon" type="image/png" href="/static/images/sb-favicon.png">
+        <link rel="stylesheet" type="text/css" href="/static/css/materialize-icons.css">
         <link rel="stylesheet" type="text/css" href="/static/css/materialize.min.css">
         <link rel="stylesheet" type="text/css" href="/static/css/sb.css">
         <script type="text/javascript" src="/static/js/materialize.min.js"></script>
@@ -13,21 +14,21 @@
         <div id="main" class="container">
             <div id="header" class="row">
                 <h1>toot-my-t-shirt</h1>
-                Share the love for your geek t-shirt!
+                Share the love for your geek t-shirt.
             </div>
 
             <div id="button-containers" class="row">
                 <button id="take-photo-btn" class="btn waves-effect waves-light disabled" name="take-photo-btn" onClick="takePhoto()">
-                    <i class="material-icons right">Take photo!</i>
+                    <i class="material-icons left">camera</i>Take photo
                 </button>
                 <button id="send-photo-btn" class="btn waves-effect waves-light disabled" name="send-photo-btn" onClick="sendPhoto()">
-                    <i class="material-icons right">Share photo!</i>
+                    <i class="material-icons left">share</i>Share photo
                 </button>
                 <button id="cancel-photo-btn" class="btn waves-effect waves-light disabled" name="cancel-photo-btn" onClick="cancelPhoto()">
-                    <i class="material-icons right">Cancel photo</i>
+                    <i class="material-icons left">cancel</i>Cancel photo
                 </button>
                 <button id="init-btn" class="btn waves-effect waves-light" name="init-btn" onClick="initCamera()">
-                    <i class="material-icons right">Grant camera permissions</i>
+                    <i class="material-icons left">photo_camera</i>Grant camera permissions
                 </button>
             </div>
 
