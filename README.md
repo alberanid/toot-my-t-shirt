@@ -15,6 +15,20 @@ Still not much to see here: the UI still sucks and very little feedback is given
 ./toot-my-t-shirt --debug --mastodon-token=C0FEFE --mastodon-api-url=https://botsin.space/ --default-image-description="a nice description of the picture" --default-message="oh noes, another selfie" --store-dir="/tmp/selfies"
 ```
 
+## Run using Docker
+
+### Build it
+
+```
+docker build -t toot-my-t-shirt .
+```
+
+### Run it
+
+```
+docker run --rm -it -p 9000:9000 toot-my-t-shirt [whatever other options you need]
+```
+
 # License and copyright
 
 Copyright 2018 Davide Alberani <da@mimante.net>
