@@ -91,7 +91,7 @@ class BaseException(Exception):
     :type message: str
     :param status: numeric http status code
     :type status: int"""
-    def __init__(self, message, status=400):
+    def __init__(self, message, status=200):
         super(BaseException, self).__init__(message)
         self.message = message
         self.status = status
@@ -136,7 +136,7 @@ class BaseHandler(tornado.web.RequestHandler):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def build_error(self, message='', status=400):
+    def build_error(self, message='', status=200):
         """Build and write an error message.
 
         :param message: textual message
@@ -145,7 +145,7 @@ class BaseHandler(tornado.web.RequestHandler):
         :type status: int
         """
         self.set_status(status)
-        self.write({'error': True, 'message': message})
+        self.write({'success': False, 'message': message})
 
 
 class RootHandler(BaseHandler):

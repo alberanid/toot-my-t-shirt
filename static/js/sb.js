@@ -75,12 +75,24 @@ function sendData(data) {
             msg = "something went wrong sending the data: " + response.status;
             console.log(msg);
             M.toast({"html": msg});
+        }
+        cancelPhoto();
+        return response.json();
+    }).then(function(json) {
+        json = json || {};
+        console.log(json);
+        if (json && json.success) {
+            msg = "❤ ❤ ❤ photo sent successfully! ❤ ❤ ❤";
+            console.log(msg);
+            M.toast({"html": msg});
         } else {
-            msg = "photo was sent successfully!";
+            msg = "something wrong on the backend";
+            console.log(msg);
+            M.toast({"html": msg});
+            msg = "the server says: " + json.message;
             console.log(msg);
             M.toast({"html": msg});
         }
-        cancelPhoto();
     }).catch(function(err) {
         msg = "something went wrong connecting to server: " + err;
         console.log(msg);
