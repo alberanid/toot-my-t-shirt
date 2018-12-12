@@ -34,8 +34,9 @@ API_VERSION = '1.0'
 
 
 class Socialite:
-    def __init__(self, options):
+    def __init__(self, options, logger=None):
         self.options = options
+        self.logger = logger
         self.init()
 
     with_mastodon = property(lambda self: self.options.mastodon_token and
@@ -53,14 +54,25 @@ class Socialite:
                                      api_base_url=self.options.mastodon_api_url)
 
     def post_image(self, img, mime_type='image/jpeg', message=None, description=None):
+        errors = []
         if message is None:
             message = self.options.default_message
         if description is None:
             description = self.options.default_image_description
         if self.with_store:
-            self.store_image(img, mime_type, message, description)
+            try:
+                self.store_image(img, mime_type, message, description)
+            except Exception as e:
+                errors.append(str(e))
         if self.with_mastodon:
-            self.mastodon_post_image(img, mime_type, message, description)
+            try:
+                self.mastodon_post_image(img, mime_type, message, description)
+            except Exception as e:
+                errors.append(str(e))
+        if errors and self.logger:
+            for err in errors:
+                self.logger.error("ERROR: %s" % err)
+        return errors
 
     def mastodon_post_image(self, img, mime_type, message, description):
         mdict = self.mastodon.media_post(media_file=img, mime_type=mime_type, description=description)
@@ -75,7 +87,6 @@ class Socialite:
                 suffix = '.' + ms[1]
         prefix = str(datetime.datetime.now()).replace(' ', 'T') + '-'
         fd, fname = tempfile.mkstemp(suffix=suffix, prefix=prefix, dir=self.options.store_dir)
-        print(fd, fname)
         os.write(fd, img)
         os.close(fd)
         txt_fname = '%s.info' % fname
@@ -168,9 +179,13 @@ class PublishHandler(BaseHandler):
             body = info['body']
             b64_image = body.split(b',')[1]
             image = base64.decodestring(b64_image)
-            with open('/tmp/selfie.jpeg', 'wb') as fd:
-                fd.write(image)
-            self.socialite.post_image(image)
+            try:
+                errors = self.socialite.post_image(image)
+                if errors:
+                    reply['success'] = False
+                    reply['message'] = '<br>\n'.join(errors)
+            except Exception as e:
+                reply = {'success': False, 'message': 'something wrong sharing the image'}
         self.write(reply)
 
 
@@ -208,7 +223,7 @@ def run():
     if os.path.isfile(options.ssl_key) and os.path.isfile(options.ssl_cert):
         ssl_options = dict(certfile=options.ssl_cert, keyfile=options.ssl_key)
 
-    socialite = Socialite(options)
+    socialite = Socialite(options, logger=logger)
     init_params = dict(global_options=options, socialite=socialite)
 
     _publish_path = r"/publish/?"

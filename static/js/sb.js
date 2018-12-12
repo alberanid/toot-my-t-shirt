@@ -86,7 +86,7 @@ function sendData(data) {
             console.log(msg);
             M.toast({"html": msg});
         } else {
-            msg = "something wrong on the backend";
+            msg = "😭 😭 😭 something wrong on the backend 😭 😭 😭";
             console.log(msg);
             M.toast({"html": msg});
             msg = "the server says: " + json.message;
