@@ -2,7 +2,7 @@
 
 A work-in-progress project for 35C3 (from an idea by itec)
 
-Still not much to see here: the UI still sucks and very little feedback is given.
+Still not much to see here: the UI still sucks and very little feedback is given to the user.
 
 # Requirements
 
@@ -28,6 +28,11 @@ docker build -t toot-my-t-shirt .
 ```
 docker run --rm -it -p 9000:9000 toot-my-t-shirt [whatever other options you need]
 ```
+
+## Notice about SSL
+
+Some browsers require HTTPS, to allow access to the webcam.  In the *ssl/* directory there is a self-signed certificate (completed with CA) to allow you to test it without the need to create your own.  In production you are supposed to use your own certificate.
+
 
 # License and copyright
 
