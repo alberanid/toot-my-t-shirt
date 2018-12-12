@@ -103,6 +103,7 @@ function cancelPhoto() {
 
 
 function updateSendCountdown() {
+    document.querySelector("#sb-countdown").innerText = "" + countdown.seconds;
     console.log("deleting photo in " + countdown.seconds + " seconds");
 }
 

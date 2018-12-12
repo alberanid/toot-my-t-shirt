@@ -29,6 +29,10 @@
     z-index: 10000;
 }
 
+#sb-countdown {
+    min-width: 20px;
+}
+
 .btn {
     margin-right: 10px;
 }
