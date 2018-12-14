@@ -77,7 +77,8 @@ class Socialite:
     def mastodon_post_image(self, img, mime_type, message, description):
         mdict = self.mastodon.media_post(media_file=img, mime_type=mime_type, description=description)
         media_id = mdict['id']
-        self.mastodon.status_post(status=message, media_ids=[media_id])
+        self.mastodon.status_post(status=message, media_ids=[media_id],
+                                  visibility=self.options.mastodon_visibility)
 
     def store_image(self, img, mime_type, message, description):
         suffix = '.jpg'
@@ -201,6 +202,7 @@ def run():
 
     define("mastodon-token", help="Mastodon token", type=str)
     define("mastodon-api-url", help="Mastodon API URL", type=str)
+    define("mastodon-visibility", help="Mastodon toot visibility", default='unlisted')
 
     define("store-dir", help="store images in this directory", type=str)
 
