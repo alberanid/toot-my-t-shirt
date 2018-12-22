@@ -143,7 +143,7 @@ function sendPhoto() {
 }
 
 
-function takePhoto() {
+function _takePhoto() {
     console.log("take photo");
     document.querySelector("#sb-message").style.visibility = "visible";
     var video = document.querySelector("#sb-video");
@@ -172,6 +172,11 @@ function takePhoto() {
     document.querySelector("#send-photo-btn").classList.remove("disabled");
     document.querySelector("#cancel-photo-btn").classList.remove("disabled");
     countdown.start(5, cancelPhoto, updateSendCountdown);
+}
+
+
+function takePhoto() {
+    window.setTimeout(_takePhoto, 2000);
 }
 
 
