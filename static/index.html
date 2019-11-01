@@ -6,20 +6,22 @@
         <link rel="icon" type="image/png" href="/static/images/sb-favicon.png">
         <link rel="stylesheet" type="text/css" href="/static/css/materialize-icons.css">
         <link rel="stylesheet" type="text/css" href="/static/css/materialize.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/iziToast.min.css">
         <link rel="stylesheet" type="text/css" href="/static/css/sb.css">
         <script type="text/javascript" src="/static/js/materialize.min.js"></script>
+        <script type="text/javascript" src="/static/js/iziToast.min.js"></script>
         <script type="text/javascript" src="/static/js/sb.js"></script>
     </head>
     <body>
         <div id="main" class="container">
-            <div id="header" class="row">
+            <div id="header" class="row center-align">
                 <h1>toot-my-t-shirt</h1>
                 Share the love for your geek t-shirt.
             </div>
 
-            <div id="button-containers" class="row">
+            <div id="button-containers" class="row center-align">
                 <button id="take-photo-btn" class="btn waves-effect waves-light disabled" name="take-photo-btn" onClick="takePhoto()">
-                    <i class="material-icons left">camera</i>Take photo <small>(2 secs delay)</small>
+                    <i class="material-icons left">camera</i>Take photo <small>(1 sec delay)</small>
                 </button>
                 <button id="send-photo-btn" class="btn waves-effect waves-light disabled" name="send-photo-btn" onClick="sendPhoto()">
                     <i class="material-icons left">share</i>Share photo
@@ -32,10 +34,7 @@
                 </button>
             </div>
 
-            <div class="row">
-                <div id="sb-message">
-                    <span id="sb-message-text">will be gone in few seconds! <span id="sb-countdown">&nbsp;</span></span>
-                </div>
+            <div class="row center-align">
                 <div id="canvas-container">
                     <video id="sb-video" autoplay="true" muted="muted"></video>
                     <canvas id="sb-canvas"></canvas>

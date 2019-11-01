@@ -1,4 +1,4 @@
-var countdown = {
+var Countdown = {
     _timeout: null,
     _stepCb: null,
     _timeoutCb: null,
@@ -7,44 +7,85 @@ var countdown = {
     _initial_seconds: 5,
 
     start: function(seconds, timeoutCb, stepCb) {
-        countdown.stop();
-        countdown.seconds = countdown._initial_seconds = seconds || 5;
-        countdown._timeoutCb = timeoutCb || countdown._timeoutCb;
-        countdown._stepCb = stepCb || countdown._stepCb;
-        countdown.running = true;
-        countdown._step();
+        Countdown.stop();
+        Countdown.seconds = Countdown._initial_seconds = seconds || 5;
+        Countdown._timeoutCb = timeoutCb || Countdown._timeoutCb;
+        Countdown._stepCb = stepCb || Countdown._stepCb;
+        Countdown.running = true;
+        Countdown._step();
     },
 
     stop: function() {
-        if (countdown._timeout) {
-            window.clearTimeout(countdown._timeout);
+        if (Countdown._timeout) {
+            window.clearTimeout(Countdown._timeout);
         }
-        countdown.running = false;
+        Countdown.running = false;
     },
 
     restart: function() {
-        countdown.start(countdown._initial_seconds);
+        Countdown.start(Countdown._initial_seconds);
     },
 
     _step: function() {
-        if (countdown._stepCb) {
-            countdown._stepCb();
+        if (Countdown._stepCb) {
+            Countdown._stepCb();
         }
-        if (countdown.seconds === 0) {
-            if (countdown._timeoutCb) {
-                countdown._timeoutCb();
+        if (Countdown.seconds === 0) {
+            if (Countdown._timeoutCb) {
+                Countdown._timeoutCb();
             }
-            countdown.stop();
+            Countdown.stop();
         } else {
-            countdown._decrement();
+            Countdown._decrement();
         }
     },
 
     _decrement: function() {
-        countdown.seconds = countdown.seconds - 1;
-        countdown._timeout = window.setTimeout(function() {
-            countdown._step();
+        Countdown.seconds = Countdown.seconds - 1;
+        Countdown._timeout = window.setTimeout(function() {
+            Countdown._step();
         }, 1000);
+    }
+};
+
+
+function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+}
+
+var UUID = uuidv4();
+
+function getWSPath() {
+    var loc = window.location, new_uri;
+    if (loc.protocol === "https:") {
+        new_uri = "wss:";
+    } else {
+        new_uri = "ws:";
+    }
+    new_uri += "//" + loc.host + "/ws?uuid=" + UUID;
+    return new_uri;
+}
+
+
+var WS = new WebSocket(getWSPath(), ['soap', 'xmpp']);
+
+WS.onerror = function(error) {
+    console.log('WebSocket Error ' + error);
+};
+
+
+WS.onmessage = function(e) {
+    console.log("received message on websocket: " + e.data);
+    var jdata = JSON.parse(e.data);
+    if (!(jdata && jdata.source == "button" && jdata.action == "clicked")) {
+        return;
+    }
+    if (!Countdown.running) {
+        takePhoto("press again to publish!");
+    } else {
+        sendPhoto();
     }
 };
 
@@ -62,8 +103,6 @@ function runCamera(stream) {
 
 
 function sendData(data) {
-    var xhr = new XMLHttpRequest();
-    var boundary = "youarenotsupposedtolookatthis";
     var formData = new FormData();
     var msg = "";
     formData.append("selfie", new Blob([data]), "selfie.jpeg");
@@ -72,9 +111,18 @@ function sendData(data) {
         body: formData
     }).then(function(response) {
         if (response.status !== 200) {
-            msg = "something went wrong sending the data: " + response.status;
+            msg = response.status;
             console.log(msg);
-            M.toast({"html": msg});
+            iziToast.error({
+                "title": "😭 something wrong sending the data 😭",
+                "message": msg,
+                "titleSize": "3em",
+                "messageSize": "2em",
+                "close": false,
+                "drag": false,
+                "pauseOnHover": false,
+                "position": "topCenter"
+            });
         }
         cancelPhoto();
         return response.json();
@@ -84,19 +132,42 @@ function sendData(data) {
         if (json && json.success) {
             msg = "❤ ❤ ❤ photo sent successfully! ❤ ❤ ❤";
             console.log(msg);
-            M.toast({"html": msg});
+            iziToast.destroy();
+            iziToast.success({
+                "title": msg,
+                "titleSize": "3em",
+                "messageSize": "2em",
+                "close": false,
+                "drag": false,
+                "pauseOnHover": false,
+                "position": "topCenter"
+            });
         } else {
-            msg = "😭 😭 😭 something wrong on the backend 😭 😭 😭";
+            msg = json.message;
             console.log(msg);
-            M.toast({"html": msg});
-            msg = "the server says: " + json.message;
-            console.log(msg);
-            M.toast({"html": msg});
+            iziToast.error({
+                "title": "😭 backend error 😭",
+                "message": msg,
+                "titleSize": "3em",
+                "messageSize": "2em",
+                "close": false,
+                "drag": false,
+                "pauseOnHover": false,
+                "position": "topCenter"
+            });
         }
     }).catch(function(err) {
-        msg = "something went wrong connecting to server: " + err;
         console.log(msg);
-        M.toast({"html": msg});
+        iziToast.error({
+            "title": "😭 error connecting to the server 😭",
+            "message": err,
+            "titleSize": "3em",
+            "messageSize": "2em",
+            "close": false,
+            "drag": false,
+            "pauseOnHover": false,
+            "position": "topCenter"
+        });
         cancelPhoto();
     });
 }
@@ -104,19 +175,12 @@ function sendData(data) {
 
 function cancelPhoto() {
     console.log("cancel photo");
-    document.querySelector("#sb-message").style.visibility = "hidden";
     document.querySelector("#send-photo-btn").classList.add("disabled");
     document.querySelector("#cancel-photo-btn").classList.add("disabled");
     var canvas = document.querySelector("#sb-canvas");
     var context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
-    countdown.stop();
-}
-
-
-function updateSendCountdown() {
-    document.querySelector("#sb-countdown").innerText = "" + countdown.seconds;
-    console.log("deleting photo in " + countdown.seconds + " seconds");
+    Countdown.stop();
 }
 
 
@@ -130,23 +194,44 @@ function isBlank(canvas) {
 
 function sendPhoto() {
     console.log("send photo");
-    countdown.stop();
-    document.querySelector("#sb-message").style.visibility = "hidden";
+    Countdown.stop();
     var canvas = document.querySelector("#sb-canvas");
-    if (isBlank(canvas)) {
+    if (!canvas || isBlank(canvas)) {
         var msg = "I cowardly refuse to send a blank image.";
-        console.log(msg)
-        M.toast({"html": msg});
+        console.log(msg);
+        iziToast.warning({
+            "title": msg,
+            "titleSize": "3em",
+            "messageSize": "2em",
+            "close": false,
+            "drag": false,
+            "pauseOnHover": false,
+            "position": "topCenter"
+        });
         return;
     }
     return sendData(canvas.toDataURL("image/jpeg"));
 }
 
 
-function _takePhoto() {
+function _takePhoto(message) {
     console.log("take photo");
-    document.querySelector("#sb-message").style.visibility = "visible";
     var video = document.querySelector("#sb-video");
+    if (!(video.offsetWidth && video.offsetHeight)) {
+        var msg = "missing video";
+        console.log(msg);
+        iziToast.warning({
+            "title": msg,
+            "message": "please grant camera permissions",
+            "titleSize": "3em",
+            "messageSize": "2em",
+            "close": false,
+            "drag": false,
+            "pauseOnHover": false,
+            "position": "topCenter"
+        });
+        return;
+    }
     var canvas = document.querySelector("#sb-canvas");
     var context = canvas.getContext("2d");
     canvas.width = video.offsetWidth;
@@ -171,12 +256,22 @@ function _takePhoto() {
     context.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight);
     document.querySelector("#send-photo-btn").classList.remove("disabled");
     document.querySelector("#cancel-photo-btn").classList.remove("disabled");
-    countdown.start(5, cancelPhoto, updateSendCountdown);
+    iziToast.question({
+        "title": "do you like what you see?",
+        "message": message || "press \"share photo\" to publish!",
+        "titleSize": "3em",
+        "messageSize": "2em",
+        "close": false,
+        "drag": false,
+        "pauseOnHover": false,
+        "position": "topCenter"
+    });
+    Countdown.start(5, cancelPhoto);
 }
 
 
-function takePhoto() {
-    window.setTimeout(_takePhoto, 2000);
+function takePhoto(msg) {
+    window.setTimeout(function() { _takePhoto(msg); }, 1000);
 }
 
 
@@ -198,7 +293,16 @@ function initCamera() {
     }).catch(function(err) {
         console.log("unable to open camera");
         console.log(err);
-        M.toast({"html": "unable to open camera; please reload this page: " + err});
+        iziToast.error({
+            "title": "unable to open camera",
+            "message": "please reload this page: " + err,
+            "titleSize": "3em",
+            "messageSize": "2em",
+            "close": false,
+            "drag": false,
+            "pauseOnHover": false,
+            "position": "topCenter"
+        });
     });
 }
 

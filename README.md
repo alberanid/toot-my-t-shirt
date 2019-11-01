@@ -36,7 +36,7 @@ Some browsers require HTTPS, to allow access to the webcam.  In the *ssl/* direc
 
 # License and copyright
 
-Copyright 2018 Davide Alberani <da@mimante.net>
+Copyright 2018-2019 Davide Alberani <da@mimante.net>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
