@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """toot-my-t-shirt
 
-Copyright 2018 Davide Alberani <da@mimante.net>
+Copyright 2018-2019 Davide Alberani <da@mimante.net>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ limitations under the License.
 """
 
 import os
+import re
+import json
 import base64
 import logging
 import tempfile
@@ -25,13 +27,17 @@ import tornado.httpserver
 import tornado.ioloop
 from tornado.options import define, options
 import tornado.web
+import tornado.websocket
 from tornado import gen, escape
 
 from mastodon import Mastodon
 
-
 API_VERSION = '1.0'
 
+# Keep track of WebSocket connections.
+_ws_clients = {}
+
+re_slashes = re.compile(r'//+')
 
 class Socialite:
     def __init__(self, options, logger=None):
@@ -190,6 +196,85 @@ class PublishHandler(BaseHandler):
         self.write(reply)
 
 
+class ButtonHandler(BaseHandler):
+    @gen.coroutine
+    def post(self, **kwargs):
+        reply = {'success': True}
+        self.send_ws_message('/ws', json.dumps({"source": "button", "action": "clicked"}))
+        self.write(reply)
+
+    @gen.coroutine
+    def send_ws_message(self, path, message):
+        """Send a WebSocket message to all the connected clients.
+
+        :param path: partial path used to build the WebSocket url
+        :type path: str
+        :param message: message to send
+        :type message: str
+        """
+        try:
+            url = '%s://localhost:%s/ws?uuid=bigredbutton' % ('wss' if self.ssl_options else 'ws',
+                                                              self.global_options.port)
+            self.logger.info(url)
+            req = tornado.httpclient.HTTPRequest(url, validate_cert=False)
+            ws = yield tornado.websocket.websocket_connect(req)
+            ws.write_message(message)
+            ws.close()
+        except Exception as e:
+            self.logger.error('Error yielding WebSocket message: %s', e)
+
+
+class WSHandler(tornado.websocket.WebSocketHandler):
+    def initialize(self, **kwargs):
+        """Add every passed (key, value) as attributes of the instance."""
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def _clean_url(self, url):
+        url = re_slashes.sub('/', url)
+        ridx = url.rfind('?')
+        if ridx != -1:
+            url = url[:ridx]
+        return url
+
+    def open(self, *args, **kwargs):
+        try:
+            self.uuid = self.get_argument('uuid')
+        except:
+            self.uuid = None
+        url = self._clean_url(self.request.uri)
+        _ws_clients.setdefault(url, {})
+        if self.uuid and self.uuid not in _ws_clients[url]:
+            _ws_clients[url][self.uuid] = self
+        self.logger.debug('WSHandler.open %s clients connected' % len(_ws_clients[url]))
+
+    def on_message(self, message):
+        url = self._clean_url(self.request.uri)
+        self.logger.debug('WSHandler.on_message url: %s' % url)
+        count = 0
+        _to_delete = set()
+        current_uuid = None
+        try:
+            current_uuid = self.get_argument('uuid')
+        except:
+            pass
+        for uuid, client in _ws_clients.get(url, {}).items():
+            if uuid and uuid == current_uuid:
+               continue
+            try:
+                client.write_message(message)
+            except:
+                _to_delete.add(uuid)
+                continue
+            count += 1
+        for uuid in _to_delete:
+            try:
+                del _ws_clients[url][uuid]
+            except KeyError:
+                pass
+        self.logger.debug('WSHandler.on_message sent message to %d clients' % count)
+
+
 def run():
     """Run the Tornado web application."""
     # command line arguments; can also be written in a configuration file,
@@ -226,12 +311,16 @@ def run():
         ssl_options = dict(certfile=options.ssl_cert, keyfile=options.ssl_key)
 
     socialite = Socialite(options, logger=logger)
-    init_params = dict(global_options=options, socialite=socialite)
+    init_params = dict(global_options=options, ssl_options=ssl_options, socialite=socialite, logger=logger)
 
     _publish_path = r"/publish/?"
+    _button_path = r"/button/?"
     application = tornado.web.Application([
+            (r'/ws', WSHandler, init_params),
             (_publish_path, PublishHandler, init_params),
             (r'/v%s%s' % (API_VERSION, _publish_path), PublishHandler, init_params),
+            (_button_path, ButtonHandler, init_params),
+            (r'/v%s%s' % (API_VERSION, _button_path), ButtonHandler, init_params),
             (r"/(?:index.html)?", RootHandler, init_params),
             (r'/?(.*)', tornado.web.StaticFileHandler, {"path": "static"})
         ],
