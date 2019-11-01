@@ -1,8 +1,10 @@
 #canvas-container {
     min-width: 640px;
     min-height: 480px;
+    width: 800px;
+    height: auto;
     position: relative;
-    display: none;
+    margin: 0 auto;
 }
 
 #header {
@@ -10,18 +12,20 @@
 }
 
 #sb-video {
+    z-index: 100;
     position: absolute;
+    width: 100%;
+    height: auto;
     top: 0px;
     left: 0px;
-    z-index: 100;
 }
 
 #sb-canvas {
+    z-index: 1000;
     position: absolute;
+    background-color: rgba(0, 0, 0, 0);
     top: 0px;
     left: 0px;
-    background-color: rgba(0, 0, 0, 0);
-    z-index: 1000;
 }
 
 #sb-message {
@@ -29,10 +33,3 @@
     z-index: 10000;
 }
 
-#sb-countdown {
-    min-width: 20px;
-}
-
-.btn {
-    margin-right: 10px;
-}

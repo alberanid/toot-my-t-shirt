@@ -99,6 +99,7 @@ function runCamera(stream) {
         video.play();
     };
     video.srcObject = stream;
+    resizeCanvas(video, 'sb-canvas');
 }
 
 
@@ -306,3 +307,9 @@ function initCamera() {
     });
 }
 
+
+function resizeCanvas(el, canvasID) {
+    var canvas = document.getElementById(canvasID);
+    canvas.width = el.offsetWidth;
+    canvas.height = el.offsetHeighth;
+}
