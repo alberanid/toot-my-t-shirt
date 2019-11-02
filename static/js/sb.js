@@ -69,7 +69,7 @@ function getWSPath() {
 }
 
 
-var WS = new WebSocket(getWSPath(), ['soap', 'xmpp']);
+var WS = new WebSocket(getWSPath());
 
 WS.onerror = function(error) {
     console.log('WebSocket Error ' + error);
