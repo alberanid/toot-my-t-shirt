@@ -1,14 +1,16 @@
+var DEFAULT_DELAY = 7;
+
 var Countdown = {
     _timeout: null,
     _stepCb: null,
     _timeoutCb: null,
     running: false,
-    seconds: 5,
-    _initial_seconds: 5,
+    seconds: DEFAULT_DELAY,
+    _initial_seconds: DEFAULT_DELAY,
 
     start: function(seconds, timeoutCb, stepCb) {
         Countdown.stop();
-        Countdown.seconds = Countdown._initial_seconds = seconds || 5;
+        Countdown.seconds = Countdown._initial_seconds = seconds || DEFAULT_DELAY;
         Countdown._timeoutCb = timeoutCb || Countdown._timeoutCb;
         Countdown._stepCb = stepCb || Countdown._stepCb;
         Countdown.running = true;
