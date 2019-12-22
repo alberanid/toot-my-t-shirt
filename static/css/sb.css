@@ -42,3 +42,16 @@
     z-index: 10000;
 }
 
+.feed-images {
+    max-height: 120px;
+}
+
+#right-col-container {
+    max-height: 640px;
+    overflow: hidden;
+}
+
+/* Firefox camera indicator */
+#webrtcIndicator {
+    display: none;
+}

@@ -33,7 +33,7 @@
                             </button>
                         </p>
                         <p>
-                            <button id="cancel-photo-btn" class="btn waves-effect waves-light disabled" name="cancel-photo-btn" onClick="cancelPhoto()">
+                            <button id="cancel-photo-btn" class="btn waves-effect waves-light disabled" name="cancel-photo-btn" onClick="cancelPhoto(true)">
                                 <i class="material-icons left">cancel</i>Cancel photo
                             </button>
                         </p>
@@ -48,9 +48,17 @@
                 <div id="video-info-container" class="col center-align">
                     <div id="izi-container"></div>
                     <div id="canvas-container">
+                        use the button at the left to grant camera permissions
                         <video id="sb-video" autoplay muted></video>
                         <canvas id="sb-canvas"></canvas>
                     </div>
+                </div>
+
+                <div id="right-col-container" class="col center-align s3">
+                    <div id="header" class="row center-align">
+                        <h1>latest</h1>
+                    </div>
+                    <div id="images-container"></div>
                 </div>
             </div>
         </div>

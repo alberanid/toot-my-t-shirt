@@ -1,4 +1,5 @@
 var DEFAULT_DELAY = 20;
+var ACCOUNT_ID = "133328";
 
 var Countdown = {
     _timeout: null,
@@ -149,6 +150,7 @@ function sendData(data) {
                 "progressBarColor": "red",
                 "position": "topCenter"
             });
+            updateFeed();
         } else {
             msg = json.message;
             console.log(msg);
@@ -166,7 +168,7 @@ function sendData(data) {
             });
         }
     }).catch(function(err) {
-        console.log(msg);
+        console.log(err);
         iziToast.error({
             "title": "😭 error connecting to the server 😭",
             "target": "#izi-container",
@@ -184,7 +186,7 @@ function sendData(data) {
 }
 
 
-function cancelPhoto() {
+function cancelPhoto(clearToast) {
     console.log("cancel photo");
     document.querySelector("#send-photo-btn").classList.add("disabled");
     document.querySelector("#cancel-photo-btn").classList.add("disabled");
@@ -192,7 +194,9 @@ function cancelPhoto() {
     var context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
     Countdown.stop();
-    iziToast.destroy();
+    if (clearToast) {
+        iziToast.destroy();
+    }
 }
 
 
@@ -290,7 +294,40 @@ function _takePhoto(message) {
 
 
 function takePhoto(msg) {
-    window.setTimeout(function() { _takePhoto(msg); }, 1000);
+    _takePhoto(msg);
+    // in case we need to introduce a delay:
+    // window.setTimeout(function() { _takePhoto(msg); }, 1000);
+}
+
+
+function loadMedia(url) {
+    fetch(url)
+    .then((response) => response.text())
+    .then((jdata) => {
+        var data = JSON.parse(jdata);
+        var imgCont = document.getElementById("images-container");
+        imgCont.innerHTML = "";
+        for (var i = 0 ; i < data.length; i++) {
+            var elem = data[i];
+            if (!(elem.media_attachments && elem.media_attachments.length > 0)) {
+                continue;
+            }
+            var imgData = elem.media_attachments[0];
+            if (imgData.type != "image" || !imgData.preview_url) {
+                continue;
+            }
+            var imgUrl = imgData.preview_url;
+            imgCont.innerHTML += "<p><img class=\"feed-images\" src=" + imgUrl + "></p>";
+        }
+    })
+    .catch((error) => {
+        console.warn(error);
+    });
+}
+
+
+function updateFeed() {
+    loadMedia("https://chaos.social/api/v1/accounts/" + ACCOUNT_ID + "/statuses");
 }
 
 
@@ -324,6 +361,7 @@ function initCamera() {
             "position": "topCenter"
         });
     });
+
 }
 
 
@@ -331,4 +369,9 @@ function resizeCanvas(el, canvasID) {
     var canvas = document.getElementById(canvasID);
     canvas.width = el.offsetWidth;
     canvas.height = el.offsetHeighth;
+}
+
+
+window.onload = function(e) {
+    updateFeed();
 }
