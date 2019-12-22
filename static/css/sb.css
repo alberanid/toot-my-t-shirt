@@ -7,6 +7,15 @@
     margin: 0 auto;
 }
 
+#video-info-container {
+    padding-top: 0.2em;
+}
+
+#izi-container {
+    height: 4em;
+    width: 100%;
+}
+
 #header {
     margin-left: 15px;
 }

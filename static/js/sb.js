@@ -1,4 +1,4 @@
-var DEFAULT_DELAY = 7;
+var DEFAULT_DELAY = 20;
 
 var Countdown = {
     _timeout: null,
@@ -118,12 +118,14 @@ function sendData(data) {
             console.log(msg);
             iziToast.error({
                 "title": "😭 something wrong sending the data 😭",
+                "target": "#izi-container",
                 "message": msg,
                 "titleSize": "3em",
                 "messageSize": "2em",
                 "close": false,
                 "drag": false,
                 "pauseOnHover": false,
+                "progressBarColor": "red",
                 "position": "topCenter"
             });
         }
@@ -138,11 +140,13 @@ function sendData(data) {
             iziToast.destroy();
             iziToast.success({
                 "title": msg,
+                "target": "#izi-container",
                 "titleSize": "3em",
                 "messageSize": "2em",
                 "close": false,
                 "drag": false,
                 "pauseOnHover": false,
+                "progressBarColor": "red",
                 "position": "topCenter"
             });
         } else {
@@ -150,12 +154,14 @@ function sendData(data) {
             console.log(msg);
             iziToast.error({
                 "title": "😭 backend error 😭",
+                "target": "#izi-container",
                 "message": msg,
                 "titleSize": "3em",
                 "messageSize": "2em",
                 "close": false,
                 "drag": false,
                 "pauseOnHover": false,
+                "progressBarColor": "red",
                 "position": "topCenter"
             });
         }
@@ -163,12 +169,14 @@ function sendData(data) {
         console.log(msg);
         iziToast.error({
             "title": "😭 error connecting to the server 😭",
+            "target": "#izi-container",
             "message": err,
             "titleSize": "3em",
             "messageSize": "2em",
             "close": false,
             "drag": false,
             "pauseOnHover": false,
+            "progressBarColor": "red",
             "position": "topCenter"
         });
         cancelPhoto();
@@ -184,6 +192,7 @@ function cancelPhoto() {
     var context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
     Countdown.stop();
+    iziToast.destroy();
 }
 
 
@@ -204,11 +213,13 @@ function sendPhoto() {
         console.log(msg);
         iziToast.warning({
             "title": msg,
+            "target": "#izi-container",
             "titleSize": "3em",
             "messageSize": "2em",
             "close": false,
             "drag": false,
             "pauseOnHover": false,
+            "progressBarColor": "red",
             "position": "topCenter"
         });
         return;
@@ -225,12 +236,14 @@ function _takePhoto(message) {
         console.log(msg);
         iziToast.warning({
             "title": msg,
+            "target": "#izi-container",
             "message": "please grant camera permissions",
             "titleSize": "3em",
             "messageSize": "2em",
             "close": false,
             "drag": false,
             "pauseOnHover": false,
+            "progressBarColor": "red",
             "position": "topCenter"
         });
         return;
@@ -260,16 +273,19 @@ function _takePhoto(message) {
     document.querySelector("#send-photo-btn").classList.remove("disabled");
     document.querySelector("#cancel-photo-btn").classList.remove("disabled");
     iziToast.question({
-        "title": "do you like what you see?",
+        "title": "do you like it?",
+        "timeout": DEFAULT_DELAY * 1000,
+        "target": "#izi-container",
         "message": message || "press \"share photo\" to publish!",
         "titleSize": "3em",
         "messageSize": "2em",
         "close": false,
         "drag": false,
         "pauseOnHover": false,
+        "progressBarColor": "red",
         "position": "topCenter"
     });
-    Countdown.start(5, cancelPhoto);
+    Countdown.start(DEFAULT_DELAY, cancelPhoto);
 }
 
 
@@ -304,6 +320,7 @@ function initCamera() {
             "close": false,
             "drag": false,
             "pauseOnHover": false,
+            "progressBarColor": "red",
             "position": "topCenter"
         });
     });

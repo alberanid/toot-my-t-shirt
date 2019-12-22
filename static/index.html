@@ -13,31 +13,44 @@
         <script type="text/javascript" src="/static/js/sb.js"></script>
     </head>
     <body>
-        <div id="main" class="container">
-            <div id="header" class="row center-align">
-                <h1>toot-my-t-shirt</h1>
-                Share the love for your geek t-shirt.
-            </div>
+        <div id="main">
+            <div class="row">
+                <div class="col s3">
+                    <div id="header" class="row center-align">
+                        <h1>toot-my-t-shirt</h1>
+                        Share the love for your geek t-shirt.
+                    </div>
 
-            <div id="button-containers" class="row center-align">
-                <button id="take-photo-btn" class="btn waves-effect waves-light disabled" name="take-photo-btn" onClick="takePhoto()">
-                    <i class="material-icons left">camera</i>Take photo <small>(1 sec delay)</small>
-                </button>
-                <button id="send-photo-btn" class="btn waves-effect waves-light disabled" name="send-photo-btn" onClick="sendPhoto()">
-                    <i class="material-icons left">share</i>Share photo
-                </button>
-                <button id="cancel-photo-btn" class="btn waves-effect waves-light disabled" name="cancel-photo-btn" onClick="cancelPhoto()">
-                    <i class="material-icons left">cancel</i>Cancel photo
-                </button>
-                <button id="init-btn" class="btn waves-effect waves-light" name="init-btn" onClick="initCamera()">
-                    <i class="material-icons left">photo_camera</i>Grant camera permissions
-                </button>
-            </div>
+                    <div id="button-containers" class="row center-align">
+                        <p>
+                            <button id="take-photo-btn" class="btn waves-effect waves-light disabled" name="take-photo-btn" onClick="takePhoto()">
+                                <i class="material-icons left">camera</i>Take photo
+                            </button>
+                        </p>
+                        <p>
+                            <button id="send-photo-btn" class="btn waves-effect waves-light disabled" name="send-photo-btn" onClick="sendPhoto()">
+                                <i class="material-icons left">share</i>Share photo
+                            </button>
+                        </p>
+                        <p>
+                            <button id="cancel-photo-btn" class="btn waves-effect waves-light disabled" name="cancel-photo-btn" onClick="cancelPhoto()">
+                                <i class="material-icons left">cancel</i>Cancel photo
+                            </button>
+                        </p>
+                        <p>
+                            <button id="init-btn" class="btn waves-effect waves-light" name="init-btn" onClick="initCamera()">
+                                <i class="material-icons left">photo_camera</i>Grant camera permissions
+                            </button>
+                        </p>
+                    </div>
+                </div>
 
-            <div class="row center-align">
-                <div id="canvas-container">
-                    <video id="sb-video" autoplay muted></video>
-                    <canvas id="sb-canvas"></canvas>
+                <div id="video-info-container" class="col center-align">
+                    <div id="izi-container"></div>
+                    <div id="canvas-container">
+                        <video id="sb-video" autoplay muted></video>
+                        <canvas id="sb-canvas"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
